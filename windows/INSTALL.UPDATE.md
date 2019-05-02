@@ -93,6 +93,7 @@ If you are using OpenBlas, you can ignore `MKLDIR`.
 7. For OpenBLAS support, make a copy of the file `kaldiwin_openblas.props` and rename the copy `kaldiwin.props`
 
 8. Create the Microsoft Visual Studio solution using Git Bash
+
 Using Git Bash, navigate to the folder containing kaldi/windows
 
    Example:
