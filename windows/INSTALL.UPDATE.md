@@ -43,7 +43,7 @@ Set property to **true** for the version of Windows 10 SDK you have installed. I
 
 Example:
 
-``` js
+``` xml
 <PropertyGroup>
   <!-- Windows 10 Update 1809 (October 2018) -->
   <WindowsTargetPlatformVersion Condition="true" >10.0.17763.0</WindowsTargetPlatformVersion>
@@ -94,18 +94,18 @@ If you are using OpenBlas, you can ignore `MKLDIR`.
 
 8. Create the Microsoft Visual Studio solution using Git Bash
 
-Using Git Bash, navigate to the folder containing kaldi/windows
+   Using Git Bash, navigate to the folder containing kaldi/windows
 
    Example:
 
        cd C:/dev/kaldi/windows
    Call the script that generates the solution:
 
-    For Intel MKL: 
+   For Intel MKL: 
 
         perl generate_solution.pl --vsver vs2017 --enable-mkl
 
-    For OpenBLAS: 
+   For OpenBLAS: 
 
         perl generate_solution.pl --vsver vs2017 --enable-openblas
 
