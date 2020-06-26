@@ -1,6 +1,7 @@
 # Building Kaldi for Windows 10 x64
 
 ## Requirements
+
 - [Microsoft Visual Studio 2017](https://visualstudio.microsoft.com/downloads/)
 - [Git Bash](https://git-scm.com/downloads)
 - BLAS library ([OpenBLAS](https://sourceforge.net/projects/openblas/files/v0.2.14/) or [Intel MKL](https://software.intel.com/en-us/mkl/choose-download/windows))
@@ -8,15 +9,19 @@
 - [Kaldi](https://github.com/kaldi-asr/kaldi)
 
 ### Microsoft Visual Studio 2017
+
 Install Microsoft Visual Studio 2017 and add the following to the installer:
+
 - Workload: Desktop Development with C++
 - Windows Universal CRT SDK
 
 ### Git Bash
+
 Install [Git Bash](https://git-scm.com/downloads).
 Stick to the default choices of the installer if you are in doubt of any options.
 
 ### BLAS library
+
 - OpenBLAS is a good choice for compiling Kaldi as it is free, open source and has good performance
 - Intel MKL has great performance and was recently made available for free
 
@@ -29,13 +34,14 @@ For OpenBLAS, download version 0.2.14 (Win64-int32 and mingw64): https://sourcef
 For Intel MKL you must register with Intel before downloading (I used **2019 Update 3 for Windows**): https://software.intel.com/en-us/mkl/choose-download/windows
 
 ## Compiling OpenFST
+
 Acquire OpenFST winport branch using Git bash:
 
     git clone -b winport https://github.com/kkm000/openfst.git
 
 Open `openfst.sln` with Visual Studio 2017.
 
-Once the solution is open, start by reading the comments in the file under the **"READ ME BEFORE BUILD"** solution folder. It is here you must select the toolset and SDK for compiling. 
+Once the solution is open, start by reading the comments in the file under the **"READ ME BEFORE BUILD"** solution folder. It is here you must select the toolset and SDK for compiling.
 
 Set property to **true** for `v141`, to use the toolset that comes with Visual Studio 2017.
 
@@ -43,7 +49,7 @@ Set property to **true** for the version of Windows 10 SDK you have installed. I
 
 Example:
 
-``` xml
+```xml
 <PropertyGroup>
   <!-- Windows 10 Update 1809 (October 2018) -->
   <WindowsTargetPlatformVersion Condition="true" >10.0.17763.0</WindowsTargetPlatformVersion>
@@ -60,17 +66,18 @@ Copy the file `libfst.lib` from `*\openfst\build_output\x64\Debug\lib` and place
 Copy the file `libfst.lib` from `*\openfst\build_output\x64\Release\lib` and place it into `*\openfst\src\lib\Release` and **rename** it `fst.lib`
 
 ## Compiling Kaldi
+
 1. Acquire Kaldi using Git bash:
 
         git clone https://github.com/kaldi-asr/kaldi
 
-3. If using OpenBLAS, extract `OpenBLAS-v0.2.14-Win64-int32.zip` and `mingw64_dll.zip` to `(kaldi)/tools`
+2. If using OpenBLAS, extract `OpenBLAS-v0.2.14-Win64-int32.zip` and `mingw64_dll.zip` to `(kaldi)/tools`
 
-4. Enter the `(kaldi)/windows` folder
+3. Enter the `(kaldi)/windows` folder
 
-5. Make a copy of `variables.props.dev` and rename the copy `variables.props`.
+4. Make a copy of `variables.props.dev` and rename the copy `variables.props`.
 
-6. Open `variables.props` in a text editor.
+5. Open `variables.props` in a text editor.
 
    If you are using Intel MKL, you can ignore `OPENBLASDIR`.
 If you are using OpenBlas, you can ignore `MKLDIR`.
@@ -101,14 +108,27 @@ If you are using OpenBlas, you can ignore `MKLDIR`.
        cd C:/dev/kaldi/windows
    Call the script that generates the solution:
 
-   For Intel MKL: 
+   For Intel MKL:
 
         perl generate_solution.pl --vsver vs2017 --enable-mkl
 
-   For OpenBLAS: 
+   For OpenBLAS:
 
         perl generate_solution.pl --vsver vs2017 --enable-openblas
 
 9. The generated solution will be placed in a parent folder looking something like this: `C:/dev/kaldi/kaldiwin_vs2017_*`
 Open the generated solution in Visual Studio and switch to **Debug|x64** (or **Release|x64**) and build. (You may need to retarget solution. Do so if necessary)
 Expect 11 projects or so to fail due to missing `portaudio.h`. The tests will most likely fail as well.
+
+If you wish to run Kaldi remember to include your library files depending on which BLAS library you chose. 
+
+## Troubleshooting
+
+If you get an error along the lines of `'SSIZE_T': redefinition; different basic types` it is most likely because there is inconsistensy between the solution platform, i.e. both OpenFST and Kaldi must both target the same solution platform (x64).
+
+If you get an error along the lines of `missing base/version.h` you must create a file `base/version.h` containing the following:
+
+      // This file was automatically created by ./get_version.sh.
+      // It is only included by ./kaldi-error.cc.
+      #define KALDI_VERSION "5.0.142-13612-windows"
+      #define KALDI_GIT_HEAD "136120ad834a5bcc794a13689f8dee024f3c1ba9"
